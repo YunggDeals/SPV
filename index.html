@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Package Vault</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        .status {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .status .locked {
+            color: red;
+        }
+        .status .unlocked {
+            color: green;
+        }
+        .animation {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+        .incorrect-animation {
+            animation-name: shake;
+        }
+        .unlock-animation {
+            animation-name: fadeIn;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Package Vault</h1>
+        <p style="text-align: center;">Be Smart, Secure Packages!</p>
+
+        <form id="pinForm">
+            <label for="pin">Enter PIN:</label>
+            <input type="password" id="pin" name="pin" maxlength="4" placeholder="Enter 4-digit PIN" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="status">
+            <p>Status: <span id="statusText" class="locked">Locked</span></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="lockButton" disabled>Lock Vault</button>
+            <button id="resetButton">Reset PIN</button>
+        </div>
+    </div>
+
+    <script>
+        const pinForm = document.getElementById('pinForm');
+        const pinInput = document.getElementById('pin');
+        const statusText = document.getElementById('statusText');
+        const lockButton = document.getElementById('lockButton');
+        const resetButton = document.getElementById('resetButton');
+        let currentStatus = 'Locked';
+        let correctPin = '1234'; // Default PIN, change as needed
+
+        pinForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const enteredPin = pinInput.value;
+
+            // Reset animation before checking PIN
+            statusText.classList.remove('incorrect-animation', 'unlock-animation');
+            statusText.classList.add('animation');
+
+            if (enteredPin === correctPin) {
+                // Unlock the vault
+                currentStatus = 'Unlocked';
+                statusText.textContent = currentStatus;
+                statusText.classList.remove('locked');
+                statusText.classList.add('unlocked');
+                lockButton.disabled = false;
+                statusText.classList.add('unlock-animation'); // Animation for successful unlock
+            } else {
+                // Incorrect PIN
+                alert('Incorrect PIN');
+                statusText.classList.remove('unlocked');
+                statusText.classList.add('locked');
+                statusText.classList.add('incorrect-animation'); // Shake animation for incorrect PIN
+            }
+
+            pinInput.value = '';
+        });
+
+        lockButton.addEventListener('click', function() {
+            currentStatus = 'Locked';
+            statusText.textContent = currentStatus;
+            statusText.classList.remove('unlocked');
+            statusText.classList.add('locked');
+            lockButton.disabled = true;
+        });
+
+        resetButton.addEventListener('click', function() {
+            correctPin = prompt('Enter new PIN:');
+            alert('PIN reset successfully!');
+        });
+    </script>
+</body>
+</html>
